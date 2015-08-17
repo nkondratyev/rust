@@ -10,11 +10,23 @@
 
 //! SIMD vectors.
 //!
-//! These types can be used for accessing basic SIMD operations. Currently
+//! These types can be used for accessing basic SIMD operations. Each of them
+//! implements the standard arithmetic operator traits (Add, Sub, Mul, Div,
+//! Rem, Shl, Shr) through compiler magic, rather than explicitly. Currently
 //! comparison operators are not implemented. To use SSE3+, you must enable
 //! the features, like `-C target-feature=sse3,sse4.1,sse4.2`, or a more
 //! specific `target-cpu`. No other SIMD intrinsics or high-level wrappers are
 //! provided beyond this module.
+//!
+//! ```rust
+//! # #![feature(core_simd)]
+//! fn main() {
+//!     use std::simd::f32x4;
+//!     let a = f32x4(40.0, 41.0, 42.0, 43.0);
+//!     let b = f32x4(1.0, 1.1, 3.4, 9.8);
+//!     println!("{:?}", a + b);
+//! }
+//! ```
 //!
 //! # Stability Note
 //!
@@ -22,35 +34,12 @@
 //! warning.
 
 #![unstable(feature = "core_simd",
-            reason = "needs an RFC to flesh out the design",
-            issue = "27731")]
-#![deprecated(since = "1.3.0",
-              reason = "use the external `simd` crate instead")]
+            reason = "needs an RFC to flesh out the design")]
 
 #![allow(non_camel_case_types)]
 #![allow(missing_docs)]
-#![allow(deprecated)]
 
-use ops::{Add, Sub, Mul, Div, Shl, Shr, BitAnd, BitOr, BitXor};
-
-macro_rules! argh {
-    () => {
-        extern "platform-intrinsic" {
-            fn simd_add<T>(x: T, y: T) -> T;
-            fn simd_sub<T>(x: T, y: T) -> T;
-            fn simd_mul<T>(x: T, y: T) -> T;
-            fn simd_div<T>(x: T, y: T) -> T;
-            fn simd_shl<T>(x: T, y: T) -> T;
-            fn simd_shr<T>(x: T, y: T) -> T;
-            fn simd_and<T>(x: T, y: T) -> T;
-            fn simd_or<T>(x: T, y: T) -> T;
-            fn simd_xor<T>(x: T, y: T) -> T;
-        }
-    }
-}
-argh!();
-
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct i8x16(pub i8, pub i8, pub i8, pub i8,
@@ -58,23 +47,23 @@ pub struct i8x16(pub i8, pub i8, pub i8, pub i8,
                  pub i8, pub i8, pub i8, pub i8,
                  pub i8, pub i8, pub i8, pub i8);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct i16x8(pub i16, pub i16, pub i16, pub i16,
                  pub i16, pub i16, pub i16, pub i16);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct i32x4(pub i32, pub i32, pub i32, pub i32);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct i64x2(pub i64, pub i64);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct u8x16(pub u8, pub u8, pub u8, pub u8,
@@ -82,57 +71,28 @@ pub struct u8x16(pub u8, pub u8, pub u8, pub u8,
                  pub u8, pub u8, pub u8, pub u8,
                  pub u8, pub u8, pub u8, pub u8);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct u16x8(pub u16, pub u16, pub u16, pub u16,
                  pub u16, pub u16, pub u16, pub u16);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct u32x4(pub u32, pub u32, pub u32, pub u32);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct u64x2(pub u64, pub u64);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct f32x4(pub f32, pub f32, pub f32, pub f32);
 
-#[repr(simd)]
+#[simd]
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct f64x2(pub f64, pub f64);
-
-macro_rules! impl_traits {
-    ($($trayt: ident, $method: ident, $func: ident: $($ty: ty),*;)*) => {
-        $($(
-            impl $trayt<$ty> for $ty {
-                type Output = Self;
-                fn $method(self, other: Self) -> Self {
-                    unsafe {
-                        $func(self, other)
-                    }
-                }
-            }
-            )*)*
-    }
-}
-
-impl_traits! {
-    Add, add, simd_add: u8x16, u16x8, u32x4, u64x2, i8x16, i16x8, i32x4, i64x2, f32x4, f64x2;
-    Sub, sub, simd_sub: u8x16, u16x8, u32x4, u64x2, i8x16, i16x8, i32x4, i64x2, f32x4, f64x2;
-    Mul, mul, simd_mul: u8x16, u16x8, u32x4, u64x2, i8x16, i16x8, i32x4, i64x2, f32x4, f64x2;
-
-    Div, div, simd_div: f32x4, f64x2;
-
-    Shl, shl, simd_shl: u8x16, u16x8, u32x4, u64x2, i8x16, i16x8, i32x4, i64x2;
-    Shr, shr, simd_shr: u8x16, u16x8, u32x4, u64x2, i8x16, i16x8, i32x4, i64x2;
-    BitAnd, bitand, simd_and: u8x16, u16x8, u32x4, u64x2, i8x16, i16x8, i32x4, i64x2;
-    BitOr, bitor, simd_or: u8x16, u16x8, u32x4, u64x2, i8x16, i16x8, i32x4, i64x2;
-    BitXor, bitxor, simd_xor: u8x16, u16x8, u32x4, u64x2, i8x16, i16x8, i32x4, i64x2;
-}
