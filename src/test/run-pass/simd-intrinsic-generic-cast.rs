@@ -15,25 +15,25 @@
 extern crate test;
 
 #[repr(simd)]
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 struct i32x4(i32, i32, i32, i32);
 #[repr(simd)]
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 struct i8x4(i8, i8, i8, i8);
 
 #[repr(simd)]
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 struct u32x4(u32, u32, u32, u32);
 #[repr(simd)]
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 struct u8x4(u8, u8, u8, u8);
 
 #[repr(simd)]
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 struct f32x4(f32, f32, f32, f32);
 
 #[repr(simd)]
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 struct f64x4(f64, f64, f64, f64);
 
 
@@ -60,7 +60,8 @@ fn main() {
                                              c as $to,
                                              d as $to);
             assert!(to == from,
-                    "{} -> {}", stringify!($from), stringify!($to));
+                    "{} -> {} ({:?} != {:?})", stringify!($from), stringify!($to),
+                    from, to);
         }}
     }
     macro_rules! tests {
