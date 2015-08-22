@@ -7,5 +7,5 @@ all:
 	rm $(TMPDIR)/$(call BIN,bar)
 	$(RUSTC) foo1.rs
 	rm $(TMPDIR)/$(call BIN,foo)
-	$(RUSTC) foo1.rs -o $(TMPDIR)/bar1
+	$(BARE_RUSTC) foo1.rs -o $(TMPDIR)/bar1 -L $(TMPDIR)
 	rm $(TMPDIR)/$(call BIN,bar1)

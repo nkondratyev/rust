@@ -3,6 +3,12 @@
 # This overrides the LD_LIBRARY_PATH for RUN
 TARGET_RPATH_DIR:=$(TARGET_RPATH_DIR):$(TMPDIR)
 
+ifdef IS_MSVC
+# FIXME #27979
+all:
+
+else
+
 # This hits an assertion in the linker on older versions of osx apparently
 ifeq ($(shell uname),Darwin)
 all:
@@ -14,4 +20,5 @@ all: $(call DYLIB,cfoo)
 	$(call RUN,bar)
 	$(call REMOVE_DYLIBS,cfoo)
 	$(call FAIL,bar)
+endif
 endif

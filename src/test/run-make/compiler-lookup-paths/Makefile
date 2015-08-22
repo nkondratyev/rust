@@ -1,5 +1,10 @@
 -include ../tools.mk
 
+ifdef IS_MSVC
+# FIXME #27979
+all:
+
+else
 all: $(TMPDIR)/libnative.a
 	mkdir -p $(TMPDIR)/crate
 	mkdir -p $(TMPDIR)/native
@@ -28,3 +33,5 @@ all: $(TMPDIR)/libnative.a
 	$(RUSTC) f.rs -L native=$(TMPDIR)/e1 -L $(TMPDIR)/e2
 	$(RUSTC) f.rs -L dependency=$(TMPDIR)/e1 -L $(TMPDIR)/e2
 	$(RUSTC) f.rs -L dependency=$(TMPDIR)/e1 -L crate=$(TMPDIR)/e2
+
+endif

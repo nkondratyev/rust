@@ -6,6 +6,11 @@
 CORRECT_DIR=$(TMPDIR)/correct
 WRONG_DIR=$(TMPDIR)/wrong
 
+ifdef IS_MSVC
+# FIXME #27979
+all:
+
+else
 all: $(TMPDIR)/libcorrect.a $(TMPDIR)/libwrong.a
 	mkdir -p $(CORRECT_DIR) $(WRONG_DIR)
 	mv $(TMPDIR)/libcorrect.a $(CORRECT_DIR)/libfoo.a
@@ -14,3 +19,5 @@ all: $(TMPDIR)/libcorrect.a $(TMPDIR)/libwrong.a
 	$(call RUN,should_succeed)
 	$(RUSTC) main.rs -o $(TMPDIR)/should_fail -L $(WRONG_DIR) -L $(CORRECT_DIR)
 	$(call FAIL,should_fail)
+
+endif
