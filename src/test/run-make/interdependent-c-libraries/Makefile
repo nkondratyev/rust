@@ -8,7 +8,14 @@
 # correct to complete the linkage. If passed as "-lfoo -lbar", then the 'foo'
 # library will be stripped out, and the linkage will fail.
 
+ifdef IS_MSVC
+# FIXME #27979
+all:
+
+else
 all: $(call STATICLIB,foo) $(call STATICLIB,bar)
 	$(RUSTC) foo.rs
 	$(RUSTC) bar.rs
 	$(RUSTC) main.rs -Z print-link-args
+
+endif

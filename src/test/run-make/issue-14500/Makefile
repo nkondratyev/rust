@@ -10,8 +10,15 @@ ifeq ($(UNAME),Bitrig)
 	EXTRACFLAGS := -lc $(EXTRACFLAGS) $(EXTRACXXFLAGS)
 endif
 
+ifdef IS_MSVC
+# FIXME #27979
+all:
+
+else
 all:
 	$(RUSTC) foo.rs --crate-type=rlib
 	$(RUSTC) bar.rs --crate-type=staticlib -C lto -L. -o $(TMPDIR)/libbar.a
 	$(CC) foo.c -lbar -o $(call RUN_BINFILE,foo) $(EXTRACFLAGS)
 	$(call RUN,foo)
+
+endif

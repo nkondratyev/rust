@@ -1056,7 +1056,7 @@ $(3)/test/run-make/%-$(1)-T-$(2)-H-$(3).ok: \
         $$(MAKE) \
 	    $$(HBIN$(1)_H_$(3))/rustc$$(X_$(3)) \
 	    $(3)/test/run-make/$$* \
-	    $$(CC_$(3)) \
+	    '$$(CC_$(3))' \
 	    "$$(CFG_GCCISH_CFLAGS_$(3))" \
 	    $$(HBIN$(1)_H_$(3))/rustdoc$$(X_$(3)) \
 	    "$$(TESTNAME)" \
@@ -1064,7 +1064,8 @@ $(3)/test/run-make/%-$(1)-T-$(2)-H-$(3).ok: \
 	    "$$(LD_LIBRARY_PATH_ENV_HOSTDIR$(1)_T_$(2)_H_$(3))" \
 	    "$$(LD_LIBRARY_PATH_ENV_TARGETDIR$(1)_T_$(2)_H_$(3))" \
 	    $(1) \
-	    $$(S)
+	    $$(S) \
+	    $(3)
 	@touch -r $$@.start_time $$@ && rm $$@.start_time
 else
 # FIXME #11094 - The above rule doesn't work right for multiple targets

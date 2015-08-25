@@ -2,6 +2,12 @@
 
 EXTRAFLAGS := $(EXTRACFLAGS)
 
+ifdef IS_MSVC
+# FIXME #27979
+all:
+
+else
+
 # FIXME: ignore freebsd
 ifneq ($(shell uname),FreeBSD)
 all:
@@ -13,5 +19,7 @@ all:
 
 else
 all:
+
+endif
 
 endif

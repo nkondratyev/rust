@@ -1,5 +1,10 @@
 -include ../tools.mk
 
+ifdef IS_MSVC
+# FIXME #27979
+all:
+
+else
 all:
 	mkdir $(TMPDIR)/a
 	mkdir $(TMPDIR)/b
@@ -9,3 +14,4 @@ all:
 	$(RUSTC) foo.rs
 	$(RUSTC) bar.rs
 	$(call RUN,bar)
+endif

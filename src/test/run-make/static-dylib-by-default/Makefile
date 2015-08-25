@@ -1,5 +1,10 @@
 -include ../tools.mk
 
+ifdef IS_MSVC
+# FIXME #27979
+all:
+
+else
 all:
 	$(RUSTC) foo.rs
 	$(RUSTC) bar.rs
@@ -7,3 +12,5 @@ all:
 	rm $(TMPDIR)/*.rlib
 	rm $(call DYLIB,foo)
 	$(call RUN,main)
+
+endif
